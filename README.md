@@ -1,5 +1,5 @@
-# cruls
-Mapa dos itinerários da Missão Cruls 1986
+# Cruls
+Mapa dos itinerários da Missão Cruls 1896
 
 Biblioteca javascript Leaflet para criar o mapa com pontos e controle de camadas exibidas
 
