@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8' />
+  <title>Missão Cruls</title>
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
+  integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+  crossorigin=""/>
+  <!-- Make sure you put this AFTER Leaflet's CSS -->
+  <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
+  integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
+  crossorigin=""></script>
+  <!-- Plugin de MBTiles -->
+  <script src="https://unpkg.com/sql.js@0.3.2/js/sql.js"></script>
+  <script src="http://ivansanchez.gitlab.io/Leaflet.TileLayer.MBTiles/Leaflet.TileLayer.MBTiles.js"></script>
+
+  <style>
+  body { margin:0; padding:0; }
+  #map { position:absolute; top:0; bottom:0; width:100%; }
+  </style>
+</head>
+<body>
+
+  <div id="map"></div>
+
+  <script src='cuad_cruls.geojson'></script>
+
+  <script>
+  // Tiles customizados com tema histórico da Missão Cruls
+  var mb = L.tileLayer.mbTiles('cruls.mbtiles');
+  mb.on('databaseloaded', function(ev) {
+    console.info('MBTiles DB loaded', ev);
+  });
+  mb.on('databaseerror', function(ev) {
+    console.info('MBTiles DB error', ev);
+  });
+
+  // Mapbox streets
+  var streets = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+    maxZoom: 18,
+    id: 'mapbox.streets',
+    accessToken: 'pk.eyJ1IjoibGluaGFyZXMiLCJhIjoiZ1Y2alNRWSJ9.O81rHYs5pR93CyFtVG-QyQ'
+  });
+
+  var MyIcon = L.Icon.extend({
+    options: {
+      iconSize: [37, 37],
+      iconAnchor: [37, 37],
+      tooltipAnchor: [0, -12]
+    }
+  })
+
+  var campIcon = new MyIcon({iconUrl: 'camp.png'});
+  var churchIcon = new MyIcon({iconUrl: 'church.png'});
+  var housesIcon = new MyIcon({iconUrl: 'houses.png'});
+  var hillIcon = new MyIcon({iconUrl: 'hill.png'});
+
+  var acampamento = L.marker([-15.7308, -47.91927], {icon: campIcon}).bindTooltip('Acampamento');
+  var corumba = L.marker([-15.92039, -48.80402], {icon: housesIcon}).bindTooltip('Corumbá');
+  var planaltina = L.marker([-15.62271, -47.66178], {icon: housesIcon}).bindTooltip('Mestre D\'Armas');
+  var piri = L.marker([-15.84378, -48.96469], {icon: churchIcon}).bindTooltip('Pirenópolis');
+  var luziania = L.marker([-16.24434, -47.95258], {icon: churchIcon}).bindTooltip('Santa Luzia');
+  var morroBahu = L.marker([-16.02922, -48.65381], {icon: hillIcon}).bindTooltip('Morro do Bahú');
+  var pirineus = L.marker([-15.78581, -48.83852], {icon: hillIcon}).bindTooltip('Montes Pirineus');
+
+  var pontos = L.layerGroup([acampamento, corumba, planaltina, piri, luziania, morroBahu, pirineus]);
+
+  // Itinerário
+  var trajeto = L.geoJSON(cuad, {
+    style: {
+      "color": "#cc0000",
+      "weight": 4,
+      "opacity": 0.55
+    }
+  });
+
+  var mymap = L.map('map', {
+    center: [-15.8147, -47.9127],
+    zoom: 11,
+    layers: [pontos, trajeto]
+  });
+
+  var baseMaps = {
+    "Verde": streets,
+    "Cáqui": mb
+  };
+
+  var overlayMaps = {
+    "Pontos": pontos,
+    "Trajeto": trajeto
+  };
+
+  L.control.layers(baseMaps, overlayMaps).addTo(mymap);
+
+  var polygon = L.polygon([ // limites do cuadrilátero Cruls
+    [-15.33, -47.35],
+    [-16.14, -47.35],
+    [-16.14, -48.85],
+    [-15.33, -48.85]
+  ], {
+    color: '#ccc',
+    fillColor: '#f03',
+    fillOpacity: 0
+  }).addTo(mymap);
+
+</script>
+
+</body>
+</html>
