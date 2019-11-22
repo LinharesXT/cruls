@@ -16,12 +16,44 @@
   <script src="http://ivansanchez.gitlab.io/Leaflet.TileLayer.MBTiles/Leaflet.TileLayer.MBTiles.js"></script>
 
   <style>
-  body { margin:0; padding:0; }
-  #map { position:absolute; top:0; bottom:0; width:100%; }
+  body {
+    margin:0;
+    padding:0; }
+  header {
+    height: 50px;
+    margin: 0;
+    padding: 0;
+    background-color: #dfc58e;
+  }
+  header h1 {
+    font-size: 26px;
+    font-family: "Times New Roman", Times, serif;
+    margin: 0;
+    padding: 0;
+    padding-top: 8px;
+  }
+  @media screen and (max-width: 400px) {
+    .hide-mobile {
+      display: none;
+    }
+  }
+  #map {
+    position:absolute;
+    top:50px;
+    bottom:0;
+    width:100%;
+  }
   </style>
 </head>
 <body>
-
+  <header>
+    <center>
+      <h1>
+        <span class="hide-mobile">Itinerários da </span>Missão Cruls 1896
+        <a href="sobre_mapa_cruls.html"><img src="info.png"></a>
+      </h1>
+    </center>
+  </header>
   <div id="map"></div>
 
   <script src='cuad_cruls.geojson'></script>
@@ -79,7 +111,7 @@
   var mymap = L.map('map', {
     center: [-15.8147, -47.9127],
     zoom: 11,
-    layers: [pontos, trajeto]
+    layers: [pontos, trajeto, mb]
   });
 
   var baseMaps = {
